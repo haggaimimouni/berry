@@ -16,21 +16,22 @@ user_data = {
 crypto_contracts = {}
 
 # Commande /gif
-async def gif(update: Update, context: CallbackContext) -> None:
-    gif = user_data.get('gif')
+
+# Exemple d'identifiant de fichier GIF obtenu via l'API Telegram
+GIF_FILE_ID = 'your_file_id_here'
+
+async def berry(update: Update, context: CallbackContext) -> None:
+    gif = user_data.get('gif', GIF_FILE_ID)  # Utilisez l'identifiant de fichier par défaut si aucun GIF n'est défini
     if gif:
         try:
-            # Vérifiez si le GIF est une URL ou un fichier local
-            if gif.startswith('http'):
-                await update.message.reply_animation(animation=gif)
-            else:
-                await update.message.reply_animation(animation=InputFile(gif))
+            await update.message.reply_animation(animation=gif)
         except Exception as e:
             logging.error(f"Error sending GIF: {e}")
             await update.message.reply_text("An error occurred while sending the GIF.")
     else:
         await update.message.reply_text("No GIF is set yet. Use /setgif to set one.")
-        
+
+
 async def set_gif(update: Update, context: CallbackContext) -> None:
     await update.message.reply_text("Send me the GIF link or upload a GIF file.")
     return 1
