@@ -14,7 +14,6 @@ user_data = {
     'quiz_questions': []
 }
 crypto_contracts = {}
-
 # Commande /gif
 
 # Exemple d'identifiant de fichier GIF obtenu via l'API Telegram
