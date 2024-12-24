@@ -4,6 +4,8 @@ from telegram import Update
 from telegram.ext import Application, CommandHandler, MessageHandler, CallbackContext, ConversationHandler
 import telegram.ext.filters as filters
 import random
+import os
+import requests
 
 # Configuration du logging
 logging.basicConfig(format='%(asctime)s - %(message)s', level=logging.INFO)
@@ -20,17 +22,30 @@ crypto_contracts = {}
 GIF_FILE_ID = 'your_file_id_here'
 
 async def berry(update: Update, context: CallbackContext) -> None:
-    gif = user_data.get('gif', GIF_FILE_ID)  # Utilisez l'identifiant de fichier par défaut si aucun GIF n'est défini
+    gif = user_data.get('gif')
     if gif:
         try:
-            await update.message.reply_animation(animation=gif)
+            if gif.startswith("http"):
+                # Téléchargez le GIF localement
+                response = requests.get(gif, stream=True)
+                if response.status_code == 200:
+                    with open("temp.gif", "wb") as f:
+                        for chunk in response.iter_content(1024):
+                            f.write(chunk)
+                    # Envoyez le fichier téléchargé localement
+                    await update.message.reply_document(document=open("temp.gif", "rb"))
+                    os.remove("temp.gif")  # Supprimez le fichier après l'envoi
+                else:
+                    await update.message.reply_text("Failed to download the GIF. The server returned an error.")
+            else:
+                # Si c'est un chemin local
+                update.message.reply_document(document=open(gif, "rb"))
         except Exception as e:
-            logging.error(f"Error sending GIF: {e}")
-            await update.message.reply_text("An error occurred while sending the GIF.")
+            await update.message.reply_text(f"Failed to send GIF: {e}")
     else:
         await update.message.reply_text("No GIF is set yet. Use /setgif to set one.")
 
-
+# Commande /setgif
 async def set_gif(update: Update, context: CallbackContext) -> None:
     await update.message.reply_text("Send me the GIF link or upload a GIF file.")
     return 1
@@ -48,7 +63,7 @@ async def save_gif(update: Update, context: CallbackContext) -> None:
     else:
         await update.message.reply_text("Invalid input. Please send a GIF or a link.")
     return ConversationHandler.END
-
+    
 # Commande /setquiz
 async def set_quiz(update: Update, context: CallbackContext) -> None:
     set_quiz_message = await update.message.reply_text("Reply to this message with your question in this format: `question;correct_answer`")
