@@ -30,6 +30,10 @@ async def gif(update: Update, context: CallbackContext) -> None:
             await update.message.reply_text("An error occurred while sending the GIF.")
     else:
         await update.message.reply_text("No GIF is set yet. Use /setgif to set one.")
+        
+async def set_gif(update: Update, context: CallbackContext) -> None:
+    await update.message.reply_text("Send me the GIF link or upload a GIF file.")
+    return 1
 
 async def save_gif(update: Update, context: CallbackContext) -> None:
     if update.message.document or update.message.photo:
