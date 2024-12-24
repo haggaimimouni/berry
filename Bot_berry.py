@@ -133,7 +133,7 @@ def main() -> None:
     application.add_handler(CommandHandler("help", start))
 
     # /gif and /setgif commands
-    application.add_handler(CommandHandler("berry", gif))
+    application.add_handler(CommandHandler("berry", berry))
     application.add_handler(ConversationHandler(
         entry_points=[CommandHandler("setgif", set_gif)],
         states={1: [MessageHandler(filters.TEXT | filters.Document.ALL | filters.PHOTO, save_gif)]},
