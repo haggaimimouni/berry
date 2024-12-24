@@ -90,7 +90,7 @@ async def handle_ca(update: Update, context: CallbackContext) -> None:
             await update.message.reply_text("No contracts saved yet. Use /ca <token_name> <contract_address> to add one.")
         else:
             contracts_list = "\n".join([f"{name}: {address}" for name, address in crypto_contracts.items()])
-            await update.message.reply_text(f"📜 Saved contracts:\n{contracts_list}")
+            await update.message.reply_text(f"📜Contracts:\n{contracts_list}")
     elif len(context.args) == 2:
         token_name = context.args[0].upper()
         contract_address = context.args[1]
@@ -104,7 +104,7 @@ async def start(update: Update, context: CallbackContext) -> None:
     await update.message.reply_text(
         "Welcome to the One Piece Bot! 🏴‍☠️\n"
         "Commands:\n"
-        "/gif - Send the current GIF\n"
+        "/berry - Send the current GIF\n"
         "/setgif - Set a new GIF\n"
         "/setquiz - Add a new quiz question\n"
         "/ca - Manage crypto contracts\n"
@@ -124,7 +124,7 @@ def main() -> None:
     application.add_handler(CommandHandler("help", start))
 
     # /gif and /setgif commands
-    application.add_handler(CommandHandler("gif", gif))
+    application.add_handler(CommandHandler("berry", gif))
     application.add_handler(ConversationHandler(
         entry_points=[CommandHandler("setgif", set_gif)],
         states={1: [MessageHandler(filters.TEXT | filters.Document.ALL | filters.PHOTO, save_gif)]},
