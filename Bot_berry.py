@@ -19,13 +19,17 @@ crypto_contracts = {}
 async def gif(update: Update, context: CallbackContext) -> None:
     gif = user_data.get('gif')
     if gif:
-        await update.message.reply_animation(animation=gif)
+        try:
+            # Vérifiez si le GIF est une URL ou un fichier local
+            if gif.startswith('http'):
+                await update.message.reply_animation(animation=gif)
+            else:
+                await update.message.reply_animation(animation=InputFile(gif))
+        except Exception as e:
+            logging.error(f"Error sending GIF: {e}")
+            await update.message.reply_text("An error occurred while sending the GIF.")
     else:
         await update.message.reply_text("No GIF is set yet. Use /setgif to set one.")
-
-async def set_gif(update: Update, context: CallbackContext) -> None:
-    await update.message.reply_text("Send me the GIF link or upload a GIF file.")
-    return 1
 
 async def save_gif(update: Update, context: CallbackContext) -> None:
     if update.message.document or update.message.photo:
